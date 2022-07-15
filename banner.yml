@@ -1,0 +1,36 @@
+---
+- name: Update banner
+  hosts: cisco_ios
+  gather_facts: no
+
+  tasks:
+    - name: Gather IOS facts
+      ios_facts: 
+        gather_subset: min
+    - name: Update Login Banner 
+      ios_banner: 
+        banner : login
+        text: |
+          **************************************************************************
+          *                                                                        *
+          * WARNING NOTICE - The system is restricted solely to TPCODL authorize   *
+          * users for legitimate business purposes only. The actual or attempted   *
+          * unauthorized access, use or modification of this system is strictly    *
+          * prohibited by TPCODL. Unauthorized users are subject to company        *
+          * disciplinary proceedings and/or criminal and civil penalties under     *
+          * state, or other applicable domestic and foreign laws.                  *
+          *                                                                        *
+          **************************************************************************
+        state: present
+    - name: Update MOTD Banner 
+      ios_banner: 
+        banner : motd
+        state: absent
+    - name: Update EXEC Banner 
+      ios_banner: 
+        banner : exec
+        text: |
+          Please log out immediately if you are not an authorized administrator.
+        state: present
+
+
