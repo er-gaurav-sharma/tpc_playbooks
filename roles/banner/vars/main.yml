@@ -1,0 +1,19 @@
+---
+# vars file for banner
+banner_login: |
+  **************************************************************************
+  *                                                                        *
+  * WARNING NOTICE - The system is restricted solely to TPCODL authorize   *
+  * users for legitimate business purposes only. The actual or attempted   *
+  * unauthorized access, use or modification of this system is strictly    *
+  * prohibited by TPCODL. Unauthorized users are subject to company        *
+  * disciplinary proceedings and/or criminal and civil penalties under     *
+  * state, or other applicable domestic and foreign laws.                  *
+  *                                                                        *
+  **************************************************************************
+
+banner_motd: |
+  Think well before proceed.
+
+banner_exec: |
+  Please log out immediately if you are not an authorized administrator.

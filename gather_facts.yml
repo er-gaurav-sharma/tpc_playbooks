@@ -1,0 +1,16 @@
+---
+- name: Gather Facts.
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Get complete details.
+      debug:
+        var: ansible_facts
+      tags:
+        - net_full
+    - name: Get platform or net_system.
+      debug:
+        var: ansible_facts.net_system        
+      tags:
+        - net_system

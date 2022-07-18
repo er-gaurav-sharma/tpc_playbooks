@@ -1,0 +1,18 @@
+---
+- name: Update Login, MOTD and Exec banner.
+  ios_banner:
+    banner: login
+    text: "{{banner_login}}"
+    state: present
+
+- name: Update MOTD Banner
+  ios_banner:
+    banner: motd
+    text: "{{banner_motd}}"
+    state: present
+
+- name: Update Exec Banner
+  ios_banner:
+    banner: exec
+    text: "{{banner_exec}}"
+    state: present

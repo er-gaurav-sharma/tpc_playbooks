@@ -1,0 +1,13 @@
+---
+# Cisco NXOS does not support login banner so here motd will get login banner.
+- name: Update MOTD/Login Banner
+  cisco.nxos.nxos_banner:
+    banner: motd
+    text: "{{banner_login}}"
+    state: present
+
+- name: Update Exec Banner
+  cisco.nxos.nxos_banner:
+    banner: exec
+    text: "{{banner_exec}}"
+    state: present
