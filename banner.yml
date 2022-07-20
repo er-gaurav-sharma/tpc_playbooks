@@ -2,9 +2,32 @@
 - name: Play banner.
   hosts: all
   gather_facts: true
+  vars:
+    play_banner_login: |
+      **************************************************************************
+      *                                                                        *
+      * WARNING NOTICE - The system is restricted solely to TPCODL authorize   *
+      * users for legitimate business purposes only. The actual or attempted   *
+      * unauthorized access, use or modification of this system is strictly    *
+      * prohibited by TPCODL. Unauthorized users are subject to company        *
+      * disciplinary proceedings and/or criminal and civil penalties under     *
+      * state, or other applicable domestic and foreign laws.                  *
+      *                                                                        *
+      **************************************************************************
+
+    play_banner_motd: |
+      Think well before proceed.
+
+    play_banner_exec: |
+      Please log out immediately if you are not an authorized administrator.
 
   tasks:
     - name: Get banner role
-      include_role:
+      include_role: 
         name: banner
-       
+      vars:
+        banner_login: "{{play_banner_login}}"
+        banner_motd: "{{play_banner_motd}}"
+        banner_exec: "{{play_banner_exec}}"
+          
+        
