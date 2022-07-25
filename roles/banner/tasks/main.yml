@@ -1,2 +1,2 @@
 ---
-- include_tasks: "cisco_{{ansible_facts.net_system}}.yml"
+- include_tasks: "{{ansible_facts.net_system}}.yml"

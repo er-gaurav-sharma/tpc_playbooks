@@ -1,0 +1,7 @@
+---
+net_compliant_os:
+  version: 15.2.(7)E6
+  hash_md5: 2adb9ecfefb635ef7814c8d48e3f3a4a
+  hash_sha512: e5d298c4deeb0dc43e6df5ae41d537248855688a2641c50b7cc01f86375fc9d3b9eb4e7c69b6eb4f5bd02d38fc0110ffcac4ead944c36ef201d6d3906120209a
+  src: c2960x-universalk9-mz.152-7.E6.bin
+  upgrade_method: cisco_catalyst

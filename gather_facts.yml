@@ -1,16 +1,38 @@
 ---
-- name: Gather Facts.
-  hosts: all
-  gather_facts: true
+- name: Gather Facts IOS.
+  hosts: cisco_ios
+  gather_facts: false
 
   tasks:
-    - name: Get complete details.
+    - name: Get IOS FACTS
+      cisco.ios.ios_facts:
+        gather_subset:
+          - 'hardware'
+        #gather_network_resources: all
+        available_network_resources:  no
+      tags: always
+
+    - name: Display IOS_FACTS  details.
       debug:
         var: ansible_facts
       tags:
         - net_full
-    - name: Get platform or net_system.
+
+- name: Gather Facts NXOS.
+  hosts: nxos
+  gather_facts: false
+
+  tasks:
+    - name: Get NXOS FACTS
+      cisco.nxos.nxos_facts:
+        gather_subset:
+          - 'hardware'
+        #gather_network_resources: all
+        available_network_resources:  no
+      tags: always
+
+    - name: Display NXOS_FACTS  details.
       debug:
-        var: ansible_facts.net_system        
+        var: ansible_facts
       tags:
-        - net_system
+        - net_full
