@@ -1,4 +1,4 @@
 ---
 # tasks file for upgrade_net_device
-- include_tasks: "{{ net_compliant_os.upgrade_method }}"
+- include_tasks: "{{ net_compliant_os.upgrade_method }}.yml"
   

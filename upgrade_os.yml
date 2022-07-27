@@ -1,18 +1,17 @@
 ---
 - name: Upgrade OS of network devices if not compliance.
-  hosts: all
+  hosts: cisco_ios
   gather_facts: true
  
   pre_tasks: 
     - name: Compliance check pre.
       debug:
-        msg: 
-          - "{{ inventory_hostname }}: Current Version {{ ansible_facts.net_version }} does not  compliance to new version {{ net_compliant_os.version }}"
-          - "{{ inventory_hostname }} will be upgraded to the new version {{ net_compliant_os.version }}"
-      when: ansible_facts.net_version != net_compliant_os.version
+        msg: "{{ lookup('ansible.builtin.template', 'debug_net_upgrade_os_compliance.j2') }}" 
+      tags:
+        - compliance
 
   tasks: 
-    - name: Upgrade OS for non compliance network devices.
+    - name: UPGRADE OS IMAGE IF NOT COMPLIANT.
       include_role:
         name: upgrade_net_device
       when: ansible_facts.net_version != net_compliant_os.version

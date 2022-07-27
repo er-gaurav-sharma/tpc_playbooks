@@ -1,1 +1,30 @@
 ---
+- name: ENABLE SCP SERVER
+  cisco.ios.ios_config:
+    lines: ip scp server enable
+    save_when: changed
+
+- name: RELOAD DEVICE
+  cli_command:
+    command: reload
+    check_all: yes
+    prompt:
+      - Save?
+      - confirm
+    answer:
+      - 'y'
+      - "\r"
+  tags:
+    - reload
+  ignore_errors: true
+
+# - name: reset the connection
+#   meta: reset_connection
+
+- name: WAIT FOR DEVICE TO RETURN
+  wait_for:
+    host: "{{ inventory_hostname }}"
+    port: 22
+    delay: 180
+    timeout: 240
+  delegate_to: localhost

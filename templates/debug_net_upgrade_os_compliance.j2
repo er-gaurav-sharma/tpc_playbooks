@@ -1,0 +1,10 @@
+This host {{ inventory_hostname }}
+{% if ansible_facts.net_version != net_compliant_os.version %}
+does not compliance and will be upgraded.
+Current Version: {{ ansible_facts.net_version }}
+New Version: {{ net_compliant_os.version }}
+{% else %}
+Compliance and will not upgrade.
+Current Version: {{ ansible_facts.net_version }}
+New Version: {{ net_compliant_os.version }}
+{% endif %}

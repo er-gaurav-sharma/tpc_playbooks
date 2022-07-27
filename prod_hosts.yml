@@ -2,7 +2,8 @@ all:
   children:
     c1100:
       hosts:
-        TPCODL_DC_R1: {ansible_host: 10.10.0.2} 
+        TPCODL_DC_R1: {ansible_host: 10.10.0.2}
+        TPCODL_DC_R2: {ansible_host: 192.168.98.2} 
     c2960X:
       hosts:
         TPC_R8_SW_200.6: {ansible_host: 172.20.200.6}  
@@ -20,4 +21,6 @@ all:
             switch_ios:
               children:
                 c2960X:
-                  
+    dc_ssh_key:
+      hosts:
+        TPCODL_DC_R2: {ansible_host: 192.168.98.2}
