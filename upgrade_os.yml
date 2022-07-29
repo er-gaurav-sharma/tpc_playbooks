@@ -4,14 +4,24 @@
   gather_facts: true
  
   pre_tasks: 
-    - name: Compliance check pre.
+  #   - name: COMPLIANCE CHECK.
+  #     debug:
+  #       msg: "{{ lookup('ansible.builtin.template', 'debug_net_upgrade_os_compliance.j2') }}" 
+  #     tags:
+  #       - compliance
+    - name: COMPLIANCE CHECK.
       debug:
-        msg: "{{ lookup('ansible.builtin.template', 'debug_net_upgrade_os_compliance.j2') }}" 
+        msg: >
+            '{{ (ansible_facts.net_version is version(net_compliant_os.version, "<")) | 
+            ternary("Not Compliance! Current: " + ansible_facts.net_version + " New: " + 
+            net_compliant_os.version, "Compliance! Current: " + ansible_facts.net_version + " New: " + net_compliant_os.version) }}'
       tags:
         - compliance
+        # when: ansible_facts.net_version is version(net_compliant_os.version, '<')
 
   tasks: 
     - name: UPGRADE OS IMAGE IF NOT COMPLIANT.
       include_role:
         name: upgrade_net_device
-      when: ansible_facts.net_version != net_compliant_os.version
+      when: ansible_facts.net_version is version(net_compliant_os.version, "<")
+      tags: always

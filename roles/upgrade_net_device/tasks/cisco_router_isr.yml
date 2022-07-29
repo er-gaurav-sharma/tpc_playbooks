@@ -1,24 +1,63 @@
 ---
+# Check if new image already exist and pass checksum.
+- name: List Images in IOS
+  tags: listimage
+  block:
+    - name: GET MD5 OF NEW IOS
+      cisco.ios.ios_command:
+        commands:
+          - "dir flash: | include {{ net_compliant_os.imagename }}"
+      register: dirresult
+      
+    - debug:
+        msg: "{{ dirresult.stdout }}"
+      when: net_compliant_os.imagename in dirresult.stdout[0]
+
 - name: ENABLE SCP SERVER
   cisco.ios.ios_config:
-    lines: ip scp server enable
-    save_when: changed
+    lines: 
+      - ip scp server enable
+      - ip tcp window-size 9999999
 
-# - name: RELOAD DEVICE
-#   cli_command:
-#     command: reload
-#     check_all: yes
-#     prompt:
-#       - Save\?
-#       - confirm
-#     answer:
-#       - 'y'
-#       - "\r"
-#   tags:
-#     - reload
-#   ignore_errors: true
+- name: Copy Image // This could take up to 10 minutes
+  tags: copyimage
+  ansible.netcommon.net_put: 
+    src: "files/{{ net_compliant_os.imagename }}"
+    dest: "flash:/{{ net_compliant_os.imagename }}"
+    protocol: scp
+  vars: 
+    ansible_command_timeout: 600    
+
+
+      # vars:
+      #   regexp: "{{ net_compliant_os.imagename }}"         
+
+- name: VERIFY MD5 OF NEW UPLOADED IOS
+  tags: verifymd5 
+  block:
+    - name: GET MD5 OF NEW IOS
+      cisco.ios.ios_command:
+        commands:
+          - "verify /md5 bootflash:{{ net_compliant_os.imagename }}"
+      register: md5result    
+      vars: 
+        ansible_command_timeout: 300 
+    - debug:
+        msg: "UPLOAD SUCCESSFUL: {{ md5result.stdout | regex_search(regexp, '\\1') }}"
+      when: net_compliant_os.hash_md5 in md5result.stdout | regex_search(regexp, '\\1')
+      vars:
+        regexp: '= ([0-9a-fA-F]{32})'           
+
+- name: SET BOOT SYSTEM
+  tags: bootsystem
+  cisco.ios.ios_config:
+    before: no boot system
+    lines: 
+      - boot system flash bootflash:c1100-universalk9_ias.16.10.01b.SPA.bin
+    after: config-reg 0x2102
 
 - name: SAVE CONFIG BEFORE RELOAD DEVICE
+  tags: reload
   block:
     - name: SAVE CONFIG
       cisco.ios.ios_config:
@@ -28,9 +67,6 @@
           command: "reload\n"
           sendonly: yes
 
-# - name: reset the connection
-#   meta: reset_connection
-
 - name: WAIT FOR DEVICE TO RETURN
   wait_for:
     # host: "{{ inventory_hostname }}"
@@ -39,10 +75,21 @@
     timeout: 240
   delegate_to: localhost
 
+## Check current image
 - name: GET IOS FACTS AFTER RELOAD
   cisco.ios.ios_facts:
     gather_subset:
       - 'hardware'
     #gather_network_resources: all
     available_network_resources:  no
-  tags: always
+
+- debug: 
+    msg: 
+      - "Current version is {{ ansible_net_version }}"
+
+- name: ASSERT THAT THE IOS VERSION IS CORRECT   
+  ansible.builtin.assert:
+    success_msg: "Software Upgrade has been completed"
+    fail_msg: "Software Upgrade has been failed"
+    that:
+      - ansible_facts.net_version == net_compliant_os.version
