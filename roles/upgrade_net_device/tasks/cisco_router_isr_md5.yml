@@ -1,0 +1,23 @@
+---
+- name: Find image
+  cisco.ios.ios_command:
+    commands:
+      - "dir flash: | include {{ net_compliant_os.imagename }}"
+  register: dirresult
+
+- name: GET MD5 AND SAVE RESULT
+  block:
+    - name: GET MD5
+      cisco.ios.ios_command:
+        commands:
+          - "verify /md5 bootflash:{{ net_compliant_os.imagename }}"
+      register: md5result    
+      vars: 
+        ansible_command_timeout: 300 
+      
+    - set_fact:
+        hash_result: 1 
+      when: net_compliant_os.hash_md5 in md5result.stdout | regex_search(regexp, '\\1')
+      vars:
+        regexp: '= ([0-9a-fA-F]{32})' 
+  when: net_compliant_os.imagename in dirresult.stdout[0]
