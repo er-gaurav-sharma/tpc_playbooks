@@ -2,7 +2,7 @@
 net_compliant_os:
   version: 17.06.03a
   # hash_md5: 2501b21b6fa3f71ea6acd7d59bcc8423
-  hash_md5: 149dae294d66848a47bab3df94efef64
+  hash_md5: 7584101a0e764ede3d54ab9388bf3952
   hash_sha512: 164199339e08502f9cd255f2271ccf6fc633d4abb595d46b13dd280811aca3313a080f6282efe2365076985fe28a2091e2da3f00b8ac558785b4090c869f8548
   # imagename: c1100-universalk9.17.06.03a.SPA.bin
   imagename: abc.txt

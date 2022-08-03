@@ -2,7 +2,7 @@
 - name: Upgrade OS of network devices if not compliance.
   hosts: cisco_ios
   gather_facts: true
- 
+  
   pre_tasks: 
   #   - name: COMPLIANCE CHECK.
   #     debug:
@@ -25,3 +25,6 @@
         name: upgrade_net_device
       when: ansible_facts.net_version is version(net_compliant_os.version, "<")
       tags: always
+      # vars: # Default hash verification result for new image
+      #   valid_image_exist: false
+

@@ -1,0 +1,49 @@
+---
+- set_fact: 
+    image_upload_counter: "{{ image_upload_counter | default(-1) | int + 1 }}"
+
+- debug: 
+    msg: " {{ image_upload_counter }}"
+
+- name: Find image
+  cisco.ios.ios_command:
+    commands:
+      - "dir flash: | include {{ net_compliant_os.imagename }}"
+  register: dirresult
+
+- name: GET MD5 AND SAVE RESULT
+  block:
+    - name: GET MD5
+      cisco.ios.ios_command:
+        commands:
+          - "verify /md5 bootflash:{{ net_compliant_os.imagename }}"
+      register: hash_result    
+      vars: 
+        ansible_command_timeout: 300 
+      
+    - ansible.builtin.set_fact:
+        valid_image_exist: >
+          {% if net_compliant_os.hash_md5 in hash_result.stdout | regex_search(regexp, '\\1') -%}
+            {{ true | bool }}
+          {% else -%}
+            {{ false | bool }}
+          {% endif %}
+      vars:
+        regexp: '= ([0-9a-fA-F]{32})'
+    - debug:
+        var: valid_image_exist    
+  when: net_compliant_os.imagename in dirresult.stdout[0]
+
+- name: Copy Image // This could take up to 10 minutes
+  tags: copyimage
+  ansible.netcommon.net_put: 
+    src: "files/{{ net_compliant_os.imagename }}"
+    dest: "flash:/{{ net_compliant_os.imagename }}"
+    protocol: scp
+  vars: 
+    ansible_command_timeout: 600
+  when: not valid_image_exist | bool
+
+- include_tasks: 
+    file: cisco_router_isr_hash.yml
+  when: ( not valid_image_exist | bool ) and ( image_upload_counter | int < 3)  
